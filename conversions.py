@@ -22,8 +22,6 @@ def Makhlin_invariants(U):
 def locally_equivalent(U1,U2, tol = 1e-9):
     G1_U1, G2_U1 = Makhlin_invariants(U1)
     G1_U2, G2_U2 = Makhlin_invariants(U2)
-    #print("Makhlin_invariants(U1):",G1_U1, G2_U1.real)
-    #print("Makhlin_invariants(U2):",G1_U2, G2_U2.real)
     if abs(G1_U1.real - G1_U2.real) > tol:
         return False
     if abs(G1_U1.imag - G1_U2.imag) > tol:
@@ -72,11 +70,6 @@ def weyl_to_logspec(can):
         convention = False
     elif logspec[3] < logspec[0] - 1:
         convention = False
-    #elif logspec[2] + 1/2 <= logspec[0]:
-    #    if abs(logspec[2] + 1/2 - logspec[0]) > 1e-9 or logspec[3] + 1/2 > logspec[1]:
-            #print("Rotate:",logspec)
-    #        logspec = np.array([logspec[2]+1/2,logspec[3]+1/2,logspec[0]-1/2,logspec[1]-1/2])
-            #print("After rotation:",logspec)
     return logspec, convention
 
 #rotate logspec into an equivalent one
@@ -86,7 +79,6 @@ def rotate(logspec):
 
 def process_fid(x,y):
     """Norm of the Hilbert-Schmidt inner-product"""
-    # Note: this is the same as Prakash's fidelity function
     return np.abs((x.conj() * y).sum()/len(y))
 
 def entangling_power(w):
@@ -95,7 +87,7 @@ def entangling_power(w):
     c3 = w[2] * np.pi/2
     return 1/18 * (3 - (np.cos(4*c1)*np.cos(4*c2) + np.cos(4*c2)*np.cos(4*c3) + np.cos(4*c3)*np.cos(4*c1)))
 
-def in_tetra1(w):#w needs to be an np array
+def in_region1(w):#w needs to be an np array
     """Check if a point is in the tetrahedron between CZ, I, sqrt(iSWAP), sqrt(SWAP)^dag"""
     p1 = np.array([1/2,0,0])#CNOT/CZ
     p2 = np.array([3/4,1/4,0]) #sqrt(iSWAP)
@@ -103,7 +95,7 @@ def in_tetra1(w):#w needs to be an np array
     normal = np.cross(p2 - p1, p3 - p1)
     return np.dot(w-p1,normal) > 0
 
-def in_tetra2(w):#w needs to be an np array
+def in_region2(w):#w needs to be an np array
     """Check if a point is in the tetrahedron between CZ, I, sqrt(SWAP), sqrt(iSWAP)"""
     p1 = np.array([1/2,0,0]) #CZ/CNOT
     p2 = np.array([1/4,1/4,0]) #sqrt(iSWAP)
@@ -111,7 +103,7 @@ def in_tetra2(w):#w needs to be an np array
     normal = np.cross(p3-p1,p2-p1)
     return np.dot(w-p1,normal) > 0
 
-def in_tetra3(w):#w needs to be an np array
+def in_region3(w):#w needs to be an np array
     """Check if a point is in the tetrahedron above the PE polyhedron"""
     p1 = np.array([1/4,1/4,1/4])#sqrt(SWAP)
     p2 = np.array([3/4,1/4,1/4])#sqrt(SWAP)^dag
@@ -121,10 +113,10 @@ def in_tetra3(w):#w needs to be an np array
 
 def weyl_part(w):#w needs to be an np array
     """Check which part of the weyl chamber a pt belongs to"""
-    if in_tetra1(w):
+    if in_region1(w):
         return 1
-    if in_tetra2(w):
+    if in_region2(w):
         return 2
-    if in_tetra3(w):
+    if in_region3(w):
         return 3
     return 0 #in this case the point is a PE

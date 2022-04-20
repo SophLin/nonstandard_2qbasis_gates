@@ -84,10 +84,6 @@ qlr =   [[1, 3, [0], [0], [0], 0, 1],
         [3, 1, [1, 1, 1], [1, 0, 0], [0, 0, 0], 1, 1],
         [3, 1, [1, 1, 1], [1, 1, 0], [1, 0, 0], 1, 1]]
 
-"""
-Checks whether the gates corresponding to logspec1 and logspec2 will give us a gate corresponding to logspec3,
-in 1 application of each.
-"""
 def check_synthesis(logspec1,logspec2,logspec3,tol=0.,verbose = False):
     check = True
     for r,k,a,b,c,d,_ in qlr:
@@ -105,7 +101,6 @@ def check_synthesis(logspec1,logspec2,logspec3,tol=0.,verbose = False):
                 return False
     return check
 
-# written 03/02/2022
 def check_synthesis_weyl(w1,w2,w3,tol=0.):
     ls1,_ = weyl_to_logspec(w1)
     ls2,_ = weyl_to_logspec(w2)
@@ -163,15 +158,6 @@ def find_complement(weyl):
     v2 = weyl - can_B
     proj = can_B + v1*np.dot(v1,v2)
     return proj - (weyl - proj)
-
-""" # old version
-# given a gate, see whether 3 layers of it can get us SWAP
-def swap_in_3(weyl,tol=0.):
-    comp = find_complement(weyl) # 2 layers of the gate has to get us its complement
-    ls1,_ = weyl_to_logspec(weyl)
-    ls2,_ = weyl_to_logspec(comp)
-    return check_synthesis(ls1, ls1, ls2, tol=tol)
-"""
 
 def swap_in_3(weyl,tol=0.):
     comp = find_complement(weyl) # 2 layers of the gate has to get us its complement
